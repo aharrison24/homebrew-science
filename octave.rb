@@ -48,6 +48,7 @@ class Octave < Formula
   option "with-jit",               "Use the experimental JIT support (not recommended)"
   option "with-openblas",          "Use OpenBLAS instead of native LAPACK/BLAS"
   option "with-osmesa",            "Use the OSmesa library (not recommended)"
+  option "with-audio",             "Use the sndfile and portaudio libraries for audio operations"
 
   # build dependencies
   depends_on "gnu-sed"        => :build
@@ -58,6 +59,12 @@ class Octave < Formula
   if build.with? "gui"
     depends_on "qscintilla2"
     depends_on "qt"
+  end
+
+  # Audio dependencies
+  if build.with? "audio"
+    depends_on "libsndfile"
+    depends_on "portaudio"
   end
 
   # dependencies needed for development build
@@ -124,6 +131,8 @@ class Octave < Formula
     args << "--enable-jit"       if build.with?    "jit"
     args << "--with-blas=-L#{Formula["openblas"].opt_lib} -lopenblas" if build.with? "openblas"
     args << "--without-OSMesa"   if build.without? "osmesa"
+    args << "--with-portaudio"   if build.with?    "audio"
+    args << "--with-sndfile"     if build.with?    "audio"
 
     # arguments if building without suite-sparse
     if build.without? "suite-sparse"
